@@ -1,1 +1,8 @@
 frontend/node_modules
+/bench/
+/docs/
+/examples/
+/node_modules/
+CLAUDE.md
+podman-setup.sh
+podman-stop.sh

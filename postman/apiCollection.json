@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "OptiQuery API Collection",
+    "description": "Complete API testing collection for OptiQuery backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Load Sample Data",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/load-sample-data",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "load-sample-data"]
+        }
+      }
+    },
+    {
+      "name": "Get All Tables",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/catalog/tables",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "catalog", "tables"]
+        }
+      }
+    },
+    {
+      "name": "Parse Simple Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dialect\": \"sql\",\n  \"query\": \"SELECT name, age FROM customers WHERE age > 25\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/parse",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "parse"]
+        }
+      }
+    },
+    {
+      "name": "Parse Join Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dialect\": \"sql\",\n  \"query\": \"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE c.country = 'USA'\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/parse",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "parse"]
+        }
+      }
+    },
+    {
+      "name": "Rule-Based Optimization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"strategy\": \"rule\",\n  \"logicalPlan\": {\n    \"id\": \"test_plan\",\n    \"node_type\": \"filter\",\n    \"predicate\": {\n      \"expression\": {\n        \"type\": \"binary_op\",\n        \"value\": \">\",\n        \"left\": {\"type\": \"column\", \"value\": \"age\"},\n        \"right\": {\"type\": \"literal\", \"value\": 25}\n      }\n    },\n    \"children\": [{\n      \"id\": \"scan_customers\",\n      \"node_type\": \"scan\",\n      \"table_name\": \"customers\"\n    }]\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/optimize",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "optimize"]
+        }
+      }
+    },
+    {
+      "name": "Cost-Based Optimization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"strategy\": \"cost\",\n  \"logicalPlan\": {\n    \"id\": \"test_join\",\n    \"node_type\": \"join\",\n    \"join_type\": \"inner\",\n    \"join_condition\": {\n      \"left\": {\"type\": \"column\", \"value\": \"customers.customer_id\"},\n      \"right\": {\"type\": \"column\", \"value\": \"orders.customer_id\"},\n      \"operator\": \"=\"\n    },\n    \"children\": [\n      {\n        \"id\": \"scan_customers\",\n        \"node_type\": \"scan\", \n        \"table_name\": \"customers\"\n      },\n      {\n        \"id\": \"scan_orders\",\n        \"node_type\": \"scan\",\n        \"table_name\": \"orders\"\n      }\n    ]\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/optimize",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "optimize"]
+        }
+      }
+    },
+    {
+      "name": "Simulate Execution",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"connector\": \"postgres\",\n  \"plan\": {\n    \"id\": \"test_scan\",\n    \"node_type\": \"scan\",\n    \"table_name\": \"customers\",\n    \"estimated_rows\": 50000\n  },\n  \"options\": {\"explain_analyze\": true}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/simulate",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "simulate"]
+        }
+      }
+    }
+  ]
+}
